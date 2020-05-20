@@ -27,6 +27,7 @@ import json
 
 SOME_TEXT="this is a test"
 TIME_TO_NOTIFY = 10
+NDEEP=2
 
 #----------------------------------------
 
@@ -35,6 +36,7 @@ class load_forked:
 
     def __init__(self, args):
         self.args = args
+        self.ndeep = args.ndeep
         self.some_text = args.some_text
         self.proc_c = process_commands(args.verbosity)
 
@@ -45,8 +47,8 @@ class load_forked:
 #-----------------------------------
 
     def f(self,x):
-        icount=-500000000
-        while icount < 500000000:
+        icount=-5000000
+        while icount < 5000000:
             x*x
             icount+=1
 
@@ -71,12 +73,12 @@ class load_forked:
 #       A tally for keeping count of various stats
         tally = dict(pico_cp_tries=0, pico_cp_succ = 0, pico_cp_fail = 0, 
                     hpss_tries = 0, hpss_succ = 0, hpss_fail =0)
-        self.proc_c.log("MYTEXT = %s" % (self.some_text), 0)
+        self.proc_c.log("depth = %d" % (self.ndeep), 0)
         
        # cmd="time /osg_nodes/aliprod/bin/load_cpu.py"
         cmd="time ./load_cpu.py"
 
-        for i in range(2):
+        for i in range(self.ndeep):
             print '**********%d***********' % i
             pid = os.fork()
             if pid == 0:
@@ -109,6 +111,7 @@ def main():
     p.add_argument("--time-to-notify",dest="time_to_notify",default=TIME_TO_NOTIFY,help="how frequent to email notice")
     p.add_argument("-v", "--verbose", action="count", dest="verbosity", default=0,                                                                                                 help="be verbose about actions, repeatable")
     p.add_argument("--config-file",dest="config_file",default="None",help="override any configs via a json config file")
+    p.add_argument("-n",action="count",dest="ndeep",default=NDEEP,help="how deep do the forks go")
 
 
     args = p.parse_args()
