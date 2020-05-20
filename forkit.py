@@ -82,9 +82,10 @@ class forkit:
         if pid == 0:
             # We are in the child process.
             print "in forkid --- %d (child) just was created by %d." % (os.getpid(), os.getppid())
-            s, o, e = self.proc_c.comm(cmd)
-            ut=self.get_utime(o)
-            print "output = %s, elapsed time= %d in process=%d" % (ut, e, os.getpid()) 
+#            s, o, e = self.proc_c.comm(cmd)
+        #    ut=self.get_utime(o)
+            os.system(cmd)
+            print "output of system  in process=%d" % (os.getpid()) 
         else:
             os.wait()
 
